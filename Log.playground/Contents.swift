@@ -4,6 +4,7 @@ import UIKit
 
 // model log detail
 
+
 struct LogDetails {
     var level: Log.Level
     var message: Any
@@ -63,13 +64,23 @@ class BaseDestination: DestinationProtocol {
         }
 
         extraDescribe += "\(logDetails.message)"
-        
-        print(extraDescribe)
+        print("\(Log.escape)fg\(extraDescribe)")
     }
 }
 
 open class Log {
 
+    /// XcodeColors escape code
+    public static let escape: String = "\u{001b}["
+    
+    /// XcodeColors code to reset the foreground colour
+    public static let resetForeground = "\(escape)fg;"
+    
+    /// XcodeColors code to reset the background colour
+    public static let resetBackground = "\(escape)bg;"
+    
+    /// XcodeColors code to reset both the foreground and background colours
+    public static let reset: String = "\(escape);"
     var destinations: [DestinationProtocol] = []
     
     internal var _currentDateFormatter: DateFormatter?
