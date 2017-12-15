@@ -64,23 +64,28 @@ class BaseDestination: DestinationProtocol {
         }
 
         extraDescribe += "\(logDetails.message)"
-        print("\(Log.escape)fg\(extraDescribe)")
+        
+        output(message: extraDescribe)
+    }
+    
+    func output(message: Any?) {
+        precondition(true, "Must override this")
+    }
+}
+
+class ConsoleDestination: BaseDestination {
+    override func output(message: Any?) {
+        print(message ?? "")
+    }
+}
+
+class FileDestination: BaseDestination {
+    override func output(message: Any?) {
+        
     }
 }
 
 open class Log {
-
-    /// XcodeColors escape code
-    public static let escape: String = "\u{001b}["
-    
-    /// XcodeColors code to reset the foreground colour
-    public static let resetForeground = "\(escape)fg;"
-    
-    /// XcodeColors code to reset the background colour
-    public static let resetBackground = "\(escape)bg;"
-    
-    /// XcodeColors code to reset both the foreground and background colours
-    public static let reset: String = "\(escape);"
     var destinations: [DestinationProtocol] = []
     
     internal var _currentDateFormatter: DateFormatter?
@@ -117,7 +122,6 @@ open class Log {
     
     func addDestination(destination: DestinationProtocol) {
         self.destinations.append(destination)
-        print(1)
     }
     
     // log level
@@ -149,7 +153,6 @@ open class Log {
         guard message != nil else {return}
 
         let logDetails: LogDetails = LogDetails(level: level, message: message, date: date, fileName: String.init(describing: fileName), funcName: String.init(describing: functionName), lineNumber: lineNumber)
-        print(logDetails)
         for destination in self.destinations {
             print(destination)
             destination.process(logDetails: logDetails)
@@ -157,18 +160,8 @@ open class Log {
     }
 }
 
-let baseDestination = BaseDestination()
+let baseDestination = ConsoleDestination()
 Log.default.addDestination(destination: baseDestination)
 
-Log.debug("122")
-
-
-
-
-
-
-
-
-
-
+Log.debug(123)
 
